@@ -1,0 +1,126 @@
+# Hope Outreach Ministries — website
+
+The church website: one church, six branches across Kenya.
+
+- **Site:** [Astro](https://astro.build) static site — fast, light on mobile data, nothing to patch.
+- **Editing:** [Pages CMS](https://pagescms.org) — the church's editor fills in forms; every save updates this repo.
+- **Hosting:** Cloudflare (Workers static assets) — free, unlimited bandwidth, servers in Nairobi and Mombasa. It rebuilds the site automatically about a minute after every save.
+- **Fonts:** Outfit for headings and Montserrat for everything else, nothing else. Self-hosted, so no Google Fonts request.
+- **Header:** transparent over the dark band at the top of each page; slides away as you scroll down and comes back with a solid background when you scroll up.
+- **Motion:** entrance animations use [Motion](https://motion.dev) (the library behind Framer Motion), about 5 KB. They are skipped for visitors whose device asks for reduced motion, and everything shows normally if the script doesn't load.
+- **Logo:** none yet. The header shows the church name as text and the browser tab has no icon until the official logo is added under "Logo" in Church settings.
+- **Forms:** prayer requests and contact messages are emailed to the church by [Web3Forms](https://web3forms.com) (free).
+
+## Pages
+
+| Page | What it shows |
+|---|---|
+| Home | Welcome (English and Kiswahili), branch finder, next livestream, events, latest sermons, give and prayer |
+| Branches | All 6 branches, with "Find my nearest branch" (uses the phone's location; nothing is sent anywhere) and a map of every branch (OpenStreetMap, free; it loads only when scrolled to, or on tap with Data Saver on). When every branch keeps the same service times they are said once at the top instead of on each card |
+| Each branch | Service times with language, directions and map, call and WhatsApp, pastor and welcome note, that branch's Paybill, its events |
+| Plan your visit | Pick a branch (chips) to see when to come, directions, who to ask for, "Add to calendar" (Google Calendar or a calendar file), and an optional "Let us know you're coming" form with the next four Sundays. Branch pages link here |
+| My branch | A visitor can tap "Make this my branch" on a branch page (or after "Find my nearest branch"). It is remembered on that phone only. The home page then shows that branch's next service worded for the moment ("starts in 30 min", "on now", "see you tomorrow"), and branch lists put it first |
+| Give | The main church Paybill and every branch's Paybill, copy buttons, M-Pesa steps in English and Kiswahili |
+| Live | Next livestream countdown (Kenya time) and the church's Facebook page, loaded only on tap to save data. Until a Facebook or YouTube link is set in Church settings, "Live" is left out of the menu and footer, and the home page counts down to the next Sunday service instead |
+| Sermons | The latest message featured at the top, then the library with search and series, speaker and "audio only" filters. Each sermon: Facebook or YouTube video (loaded on tap), notes, "Read it" link for the scripture, WhatsApp share and "More from this series". Artwork is optional (a YouTube video's own picture is used otherwise) |
+| Sermon player | "Listen" opens a player docked at the bottom of the screen that keeps playing while you move around the site (back 15 s, forward 30 s, speed, lock-screen controls). It remembers where you stopped, so after closing the browser it offers to resume. Upload sermon audio as MP3 at 64 kbps (about 1 MB per 10 minutes) to keep it light on data |
+| App | The site can be installed on a phone's home screen (/app/ explains how; Chrome also offers an "Install" banner after a couple of visits). It saves the home page, branches, every branch page, Give, Plan your visit, New here? and Contact for use with no signal, plus any page opened before; anything else shows an offline page with service times and the Paybill. The home-screen icon is a plain "Hope" placeholder in `public/icons/` until the official logo is ready |
+| Page changes | Pages change with a short cross-fade instead of a full reload (none for visitors who ask for reduced motion). Page scripts are set up with `onPage()` in `src/scripts/page.ts`, so they work after every page change |
+| Events | Upcoming events with a branch filter; past events disappear on their own |
+| Ministries | Exactly three: Youth, Children, Mission Outreaches. Each has its own page with who leads it, when it meets, and a "Join" form that emails the church office (the ministry's name is in the subject) |
+| Articles | Teaching, news and stories, newest first, with search and a ministry filter. Each article can be shared on WhatsApp. Drafts are saved but not published |
+| New here?, About, Prayer request, Contact, Privacy notice | Editable text pages and the two forms |
+
+## 1. Put the site online (Cloudflare) — once, about 10 minutes
+
+Someone with access to the LogNex GitHub organisation does this:
+
+1. Create a free account at <https://dash.cloudflare.com/sign-up> (use a church email address if possible).
+2. In the dashboard: **Workers & Pages → Create → Import a repository**.
+3. Connect GitHub, and allow Cloudflare access to the `LogNex/hopeoutreachministries` repository.
+4. Choose the repository and use these settings:
+   - **Build command:** `npm run build`
+   - **Deploy command:** `npx wrangler deploy`
+   - **Production branch:** `main`
+5. Click **Deploy**. The site goes live at `https://hopeoutreachministries.<your-account>.workers.dev`.
+
+**Done (18 Oct 2026):** live at <https://hopeoutreachministries.lekenipl.workers.dev/>.
+
+From then on, every change to `main` (including every save in the editor) redeploys the site automatically.
+
+**When the domain is chosen:** add it to Cloudflare (free plan), then go to the worker's **Settings → Domains & Routes → Add → Custom domain**. Also add a build variable `SITE_URL` (for example `https://hopeoutreach.or.ke`) under **Settings → Build → Variables**, so links shared on WhatsApp and Facebook use the real domain.
+
+## 2. Set up the editor (Pages CMS) — once
+
+1. Go to <https://app.pagescms.org> and sign in with the GitHub account that manages the repo.
+2. Install the Pages CMS GitHub app on `LogNex/hopeoutreachministries` when asked.
+3. Open the repository in Pages CMS, then **Settings → Collaborators** and invite the church's editor by email. They don't need a GitHub account.
+
+The editor then signs in at <https://app.pagescms.org> and sees:
+
+- **Church settings:** name, tagline, logo, announcement bar, office contacts, WhatsApp, Facebook link, main Paybill and accounts, livestream times, form key.
+- **Branches:** one entry per town (service times, Paybill, pastor, contacts, map).
+- **Events**, **Sermons** and **Articles:** add a new one with **Add entry**. For an article, tick **Draft** to save it without publishing, and keep cover images under 200 KB.
+- **Ministries:** edit Youth, Children and Mission Outreaches (leader, when they meet, phone, photo, description). They can't be added or removed. Tag an article with a ministry and it appears on that ministry's page; Mission Outreaches shows them as "Outreach stories".
+- **Pages:** About us, New here?, Privacy notice.
+
+Changes go live about a minute after **Save**.
+
+## 3. Turn on the forms (Web3Forms) — once
+
+1. Go to <https://web3forms.com>, enter the church email address that should receive prayer requests and messages, and get the **access key** it emails you.
+2. In the editor, open **Church settings** and paste it into **Web3Forms access key**. Save.
+
+Until a key is set, the Prayer and Contact pages show WhatsApp, call and email buttons instead of the form.
+
+## Content to fill in before launch
+
+Everything below starts empty or as a placeholder; the site shows "coming soon" where something is missing.
+
+**Church settings**
+- [ ] Tagline (currently a placeholder: "One church, six branches, one hope in Christ.")
+- [ ] Office phone, WhatsApp, email, head office address
+- [ ] Facebook Page link
+- [x] Main Paybill: 222 111, account 0670 000 4229
+- [ ] Livestream day(s) and time(s) (currently Sunday 10:00 as a placeholder)
+- [ ] Logo, when ready
+
+**Each of the 6 branches:** Kathingithu, Makutano, Kilakir, Noompala, Noong'abolo, Osiligi Restoration Centre
+- [x] Branch name, sub-county and county
+- [x] Pastor's name
+- [ ] Address or landmark
+- [ ] Google Maps link, and latitude/longitude for "Find my nearest branch" (in Google Maps, long-press the church → the numbers appear at the top)
+- [ ] Service times, each with its language
+- [ ] Pastor's photo, and a short welcome note
+- [ ] Phone and WhatsApp
+- [ ] Branch Paybill, only if a branch has its own (otherwise it shows the main one)
+- [ ] A photo of the congregation
+
+**Pages**
+- [ ] About us: story, vision, mission, statement of faith, leaders
+- [ ] New here?: what a service is like
+- [ ] Privacy notice: have the church's leadership review the draft
+
+**Photos of children** need a parent's or guardian's agreement (Kenya Data Protection Act, 2019).
+
+## Development
+
+Requires Node 22+.
+
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # outputs dist/
+```
+
+- `src/content/` — branches, events, sermons and text pages (Markdown). The fields are defined in `src/content.config.ts` and the editor's forms in `.pages.yml`; keep the two in step.
+- `src/data/settings.json` — church-wide settings.
+- `public/images/uploads/` — images uploaded through the editor.
+- `wrangler.jsonc` — Cloudflare config (static files only, no server code).
+
+## Later (phase 2)
+
+- M-Pesa STK Push ("enter your number, get the PIN prompt"): needs Safaricom Daraja go-live approval for each Paybill and a small server function.
+- A full Kiswahili version of the site.
+- Testimonies, photo gallery.
+- Streaming to YouTube as well as Facebook, for a searchable sermon archive.

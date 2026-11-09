@@ -1,0 +1,25 @@
+{
+  "siteName": "Hope Outreach Ministries",
+  "tagline": "Making Disciples Of All Nations...",
+  "announcement": "Submit your articles here for publishing.",
+  "announcementLink": "https://tally.so/r/BEa57A",
+  "phone": "(+254)733 706 364",
+  "whatsapp": "+254733 706 364",
+  "headOffice": "Kilakirr, Adjacent to Nairobi-Namanga Highway",
+  "facebookUrl": "facebook.com",
+  "centralPaybill": "222 111",
+  "centralAccounts": [
+    {
+      "label": "Tithes, offerings and gifts",
+      "account": "0670 000 4229"
+    }
+  ],
+  "liveServices": [
+    {
+      "day": "Sunday",
+      "time": "09:30",
+      "name": "Sunday Service"
+    }
+  ],
+  "formAccessKey": "5a94e6e2-4313-4ebb-ad51-ed5a8c81a159"
+}
